@@ -6,11 +6,10 @@ const dotenv = require('dotenv')
 const surveyRoutes = require('./routes/survey')
 const { json, urlencoded } = require('express')
 const PORT = process.env.PORT || 5000
-const DB_URL = "mongodb+srv://survey-app:MyAdeseyiSurvey@portfolio.bs2nhbj.mongodb.net/survey?retryWrites=true&w=majority"
 
 dotenv.config();
 
-mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((result) => {
         app.listen(PORT, () => {
             console.log(`server running at port: ${PORT}`)
@@ -47,19 +46,24 @@ app.use(function (req, res, next) {
 
 //APP BASE ROUTE
 app.use("/user", surveyRoutes)
+app.get("/survey", (req, res) => {
+    res.redirect("/login")
+})
 
 
 //APP ERROR ROUTE
 app.use((req, res, next) => {
-    const error = new Error(" Page Not found")
+    const error = new Error("Page Not found")
     error.status = 404;
+    // redirect("/")
     next(error)
 })
 
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
     res.json({
-        "error message": error.message
+        "error message": error.message,
+        status: 401
     })
 })
 
