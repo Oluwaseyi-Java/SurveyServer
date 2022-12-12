@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 
 
-const Response = mongoose.model("Responses", new Schema({
+const Response = mongoose.model("Response", new Schema({
     _id: mongoose.Schema.Types.ObjectId,
     response: {
         type: String,
@@ -11,7 +11,7 @@ const Response = mongoose.model("Responses", new Schema({
     }
 }))
 
-const Question = mongoose.model("Questions", new Schema({
+const Question = mongoose.model("Question", new Schema({
     _id: mongoose.Schema.Types.ObjectId,
     headTitle: {
         type: String,
@@ -68,7 +68,7 @@ const Survey = mongoose.model("Survey", new Schema({
 //     ]
 // }))
 
-const Fsurvey = mongoose.model("Fsurveys", new Schema({
+const Fsurvey = mongoose.model("Fsurvey", new Schema({
     name: String,
     email: String,
     userName: String,

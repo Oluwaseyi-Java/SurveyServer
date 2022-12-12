@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require('mongoose')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const surveyRoutes = require('./routes/survey')
+const surveyRoutes = require('./routes/user')
 const { json, urlencoded } = require('express')
 const PORT = process.env.PORT || 5000
 
@@ -46,10 +46,6 @@ app.use(function (req, res, next) {
 
 //APP BASE ROUTE
 app.use("/user", surveyRoutes)
-app.get("/survey", (req, res) => {
-    res.redirect("/login")
-})
-
 
 //APP ERROR ROUTE
 app.use((req, res, next) => {

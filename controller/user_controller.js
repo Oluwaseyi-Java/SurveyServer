@@ -1,6 +1,5 @@
-const express = require("express")
-const router = express.Router()
 const mongoose = require("mongoose")
+
 
 const {
     Response, Question, Survey, Surveys, Fsurvey
@@ -38,10 +37,7 @@ const setSurvey = async (fsurveyId, survey) => {
         fsurveyId,
         {
             $push: {
-                surveyData: {
-                    _id: docSurvey._id,
-                    title: docSurvey.title,
-                }
+                surveyData: docSurvey
             }
         },
         { new: true, useFindAndModify: false }
@@ -55,15 +51,7 @@ const setQuestion = async (surveyId, question) => {
         surveyId,
         {
             $push: {
-                questions: {
-                    _id: docQuestion._id,
-                    headTitle: docQuestion.headTitle,
-                    inputType: docQuestion.inputType,
-                    type: docQuestion.type,
-                    isOption: docQuestion.isOption,
-                    options: docQuestion.options,
-                    isRequired: docQuestion.isRequired
-                }
+                questions: docQuestion
             }
         },
         { new: true, useFindAndModify: false }
@@ -77,48 +65,18 @@ const setResponse = async (surveyId, response) => {
         surveyId,
         {
             $psuh: {
-                responses: {
-                    _id: docResponse._id,
-                    response: docResponse.response
-                }
+                responses: docResponse
             }
         },
         { new: true, useFindAndModify: false }
     )
 }
-///////////
 
-//get
+const getSurveysWithpopulate = async (id) => {
+    return Fsurvey.findById(id).populate("surveyData")
+}
 
-// router.get("/login", (req, res) => {
-
-//     Fsurvey.find().exec()
-//         .then((result) => {
-//             res.send(result)
-//             console.log(result)
-//         })
-//         .catch((err) => {
-//             res.send(err)
-//             console.log(err)
-//         })
-
-//     // res.send({ message: "conected" });
-//     console.log(req.body)
-// })
-
-// router.get("/sign-up", (req, res) => {
-//     Fsurvey.find().exec()
-//         .then((result) => {
-//             res.send(result)
-//             console.log(result)
-//         })
-//         .catch(error => {
-//             res.send(error)
-//             console.log(error)
-//         })
-// })
-
-router.get("/:userid/dashboard", (req, res) => {
+module.exports.get_survey_by_userId_at_dashboard = (req, res) => {
     Fsurvey.find().exec()
         .then(result => {
             res.send(result)
@@ -128,29 +86,21 @@ router.get("/:userid/dashboard", (req, res) => {
             res.send(error)
             console.log(error)
         })
-})
+}
 
-router.get("/survey/response/:id", (req, res) => {
-    res.send(req.params)
-})
+module.exports.get_surveys_by_userId = (req, res) => {
+    Survey.find().exec()
+        .then(result => {
+            res.send(result)
+            console.log(result)
+        })
+        .catch(error => {
+            res.send(error)
+            console.log(error)
+        })
+}
 
-router.get("/userid/surveys", (req, res) => {
-
-})
-router.get("/create/:userid/:surveyid/:surveyname", (req, res) => {
-    res.send("create data")
-})
-
-router.get("/response/survey/:name/:surveyid", (req, res) => {
-    res.send("responsev data")
-})
-
-//end of get
-
-////
-
-//post
-router.post("/sign-up", (req, res) => {
+module.exports.post_signup_data = (req, res) => {
     console.log(req.body)
 
     setFSurvey({
@@ -179,26 +129,40 @@ router.post("/sign-up", (req, res) => {
             res.send(error)
             console.log(error)
         })
-})
+}
 
-router.post("/login", (req, res) => {
+module.exports.post_login_data = (req, res) => {
 
     const details = { "email": req.body.email }
     Fsurvey.findOne(details, (err, item) => {
         if (err) {
-            res.send({ 'error': "An error has occured", "message": err })
+            res.send({ "error": err, "message": "An error has occurred, please check your internet connection." })
             console.log(err)
         }
+        else if (!item) {
+            res.send({ "message": "This account does not exist, try signing in." })
+        }
         else {
-            if (item.email === req.body.email) {
-                res.send(item)
+            if (item.email === req.body.email && item.password === req.body.password) {
+                res.status(201).send({
+                    id: item._id,
+                    name: item.name,
+                    email: item.email,
+                    phoneNo: item.phoneNo,
+                    userName: item.userName
+
+                })
+
                 console.log(item)
+            }
+            else {
+                res.send({ "message": "Please check your password" })
             }
         }
     })
-})
+}
 
-router.post("/create/:userid/:surveyid/:surveyname", (req, res) => {
+module.exports.post_questions_data = (req, res) => {
     console.log(req.body);
 
     setQuestion(req.params.surveyid, {
@@ -219,9 +183,9 @@ router.post("/create/:userid/:surveyid/:surveyname", (req, res) => {
             res.send(error)
         })
 
-})
+}
 
-router.post("/response/survey/:name/:surveyid", (req, res) => {
+module.exports.post_responses_data = (req, res) => {
     console.log(req.body);
 
     setResponse(req.params.surveyid, {
@@ -229,15 +193,17 @@ router.post("/response/survey/:name/:surveyid", (req, res) => {
         response: req.body.response
     })
         .then(result => {
+            res.send(result)
             console.log(result)
         })
         .catch(error => {
+            res.send(error)
             console.log(error)
         })
 
-})
+}
 
-router.post("/createsurvey/:userid", (req, res) => {
+module.exports.post_newSurvey = (req, res) => {
 
     console.log(req.body)
 
@@ -253,16 +219,4 @@ router.post("/createsurvey/:userid", (req, res) => {
             console.log(error)
             res.send(error)
         })
-})
-
-//end of psot
-
-//start of additional middleware
-
-router.put("/create/:userid/:surveyid/:surveyname", (req, res) => {
-
-
-})
-
-
-module.exports = router
+}
