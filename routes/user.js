@@ -34,7 +34,9 @@ const userController = require("../controller/user_controller")
 //         })
 // })
 
-router.get("/:userid/dashboard",userController.get_survey_by_userId_at_dashboard)
+/////
+
+router.get("/:userid/dashboard", userController.get_survey_by_userId_at_dashboard)
 
 router.get("/survey/response/:id", (req, res) => {
     res.send(req.params)
@@ -69,15 +71,15 @@ router.get("/response/survey/:name/:surveyid", (req, res) => {
 ////
 
 //post
-router.post("/sign-up",userController.post_signup_data)
+router.post("/sign-up", userController.post_signup_data)
 
 router.post("/login", userController.post_login_data)
 
-router.post("/create/:userid/:surveyid/:surveyname",userController.post_questions_data )
+router.post("/create/:userid/:surveyid/:surveyname", userController.post_questions_data)
 
-router.post("/response/survey/:name/:surveyid",userController.post_responses_data)
+router.post("/response/survey/:name/:surveyid", userController.post_responses_data)
 
-router.post("/createsurvey/:userid",userController.post_newSurvey)
+router.post("/createsurvey/:userid", userController.post_newSurvey)
 
 //end of psot
 
