@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 
 const {
     Response, Question, Survey, Surveys, Fsurvey
-} = require("../models/Survey")
+} = require("../models/survey")
 
 /////////
 const setFSurvey = async (fsurvey) => {
